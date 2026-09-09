@@ -19,44 +19,22 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Demo Supplier", phone: "-", address: "-" },
   ];
 
-  // Persistent Data State
+  // Persistent Data State (Cloud Only)
   let DB = {
-    products:
-      JSON.parse(localStorage.getItem("hh_products")) || INITIAL_PRODUCTS,
-    categories:
-      JSON.parse(localStorage.getItem("hh_categories")) || DEFAULT_CATEGORIES,
-    suppliers:
-      JSON.parse(localStorage.getItem("hh_suppliers")) || DEFAULT_SUPPLIERS,
-    sales: JSON.parse(localStorage.getItem("hh_sales")) || [],
-    purchases: JSON.parse(localStorage.getItem("hh_purchases")) || [],
-    expenses: JSON.parse(localStorage.getItem("hh_expenses")) || [],
+    products: [],
+    categories: [],
+    suppliers: [],
+    sales: [],
+    purchases: [],
+    expenses: [],
     posCart: [],
   };
 
-  // Clean initial demo products if present in stored localStorage
-  if (!localStorage.getItem("hh_demo_cleaned_v1")) {
-    const demoIds = [
-      "HH0001",
-      "HH0002",
-      "HH0003",
-      "HH0004",
-      "HH0005",
-      "HH0006",
-      "HH0007",
-    ];
-    DB.products = DB.products.filter((p) => !demoIds.includes(p.id));
-    localStorage.setItem("hh_demo_cleaned_v1", "true");
-    localStorage.setItem("hh_products", JSON.stringify(DB.products));
-  }
+  // Demo clean removed since we don't use localStorage anymore
 
-  // Local Storage Sync Helper
+  // Local Storage Sync Helper - Disabled per user request to directly use Google Sheets
   function saveDB() {
-    localStorage.setItem("hh_products", JSON.stringify(DB.products));
-    localStorage.setItem("hh_categories", JSON.stringify(DB.categories));
-    localStorage.setItem("hh_suppliers", JSON.stringify(DB.suppliers));
-    localStorage.setItem("hh_sales", JSON.stringify(DB.sales));
-    localStorage.setItem("hh_purchases", JSON.stringify(DB.purchases));
-    localStorage.setItem("hh_expenses", JSON.stringify(DB.expenses));
+    // No-op. Data is synced to Google Sheets instead.
   }
 
   // Toast Notification System
@@ -295,7 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!pmSupplierSelect) return;
 
     const supplierSet = new Set();
-    
+
     DB.suppliers.forEach((s) => {
       const suppName = typeof s === "string" ? s : s.name;
       if (suppName) supplierSet.add(suppName);
@@ -1143,4 +1121,82 @@ document.addEventListener("DOMContentLoaded", () => {
   // Pre-fill Settings URL input from stored/default value
   const gsUrlInput = document.getElementById("googleScriptUrlInput");
   if (gsUrlInput) gsUrlInput.value = window.GoogleSheetsAPI.getScriptUrl();
+
+  // ==========================================================================
+  // AUTO-LOAD FROM CLOUD ON NEW DEVICE (Mobile Fix)
+  // If localStorage has no products but a Google Sheets URL is configured,
+  // automatically fetch all data from Google Sheets and populate the app.
+  // ==========================================================================
+  async function loadFromCloud(isManual = false) {
+    // Always fetch from cloud. No local caching checks.
+
+    const url = window.GoogleSheetsAPI.getScriptUrl();
+    if (!url) {
+      if (isManual)
+        showToast("No Google Sheets URL configured in Settings!", true);
+      return;
+    }
+
+    // Show loading indicator
+    const loadingToast = document.createElement("div");
+    loadingToast.className = "toast-msg";
+    loadingToast.style.borderLeft = "4px solid #3b82f6";
+    loadingToast.innerHTML = `<i class="fa-solid fa-cloud-arrow-down" style="color:#60a5fa"></i> <span>${isManual ? "Loading" : "Auto-loading"} data from Google Sheets cloud...</span>`;
+    document.getElementById("toastContainer").appendChild(loadingToast);
+
+    try {
+      const data = await window.GoogleSheetsAPI.fetchAllData();
+
+      loadingToast.remove();
+
+      if (!data || !data.success) {
+        showToast(
+          isManual
+            ? "Could not load from cloud. Check your Apps Script URL & permissions."
+            : "Cloud auto-load failed — check Settings URL.",
+          true,
+        );
+        return;
+      }
+
+      // Merge cloud data into DB (cloud is source of truth)
+      if (data.products && data.products.length > 0) {
+        DB.products = data.products;
+      }
+      if (data.categories && data.categories.length > 0) {
+        DB.categories = [...new Set([...DB.categories, ...data.categories])];
+      }
+      if (data.suppliers && data.suppliers.length > 0) {
+        DB.suppliers = data.suppliers;
+      }
+      if (data.sales && data.sales.length > 0) {
+        DB.sales = data.sales;
+      }
+      if (data.expenses && data.expenses.length > 0) {
+        DB.expenses = data.expenses;
+      }
+      if (data.purchases && data.purchases.length > 0) {
+        DB.purchases = data.purchases;
+      }
+
+      saveDB();
+
+      // Refresh current view
+      renderCategoryDropdowns();
+      switchView(localStorage.getItem("hh_active_view") || "dashboard");
+
+      showToast(
+        `✅ Cloud sync complete! ${DB.products.length} products loaded from Google Sheets.`,
+      );
+    } catch (err) {
+      loadingToast.remove();
+      showToast("Cloud load error: " + err.message, true);
+    }
+  }
+
+  // Expose loadFromCloud to public API
+  window.hossainApp.loadFromCloud = () => loadFromCloud(true);
+
+  // Auto-trigger on every startup
+  setTimeout(() => loadFromCloud(false), 800);
 });

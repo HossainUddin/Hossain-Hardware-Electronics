@@ -1,0 +1,364 @@
+/* ==========================================================================
+   HOSSAIN HARDWARE & ELECTRONICS - CUSTOM CSS (Tailwind CDN Compatible)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+/* Base font override & general text size boost */
+html {
+  font-size: 16px;
+}
+body {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem; /* 15.2px for crisp readability */
+  line-height: 1.5;
+}
+
+/* Make input fields & buttons clear and touch-friendly */
+input,
+select,
+textarea {
+  font-size: 0.9375rem !important; /* 15px to prevent mobile iOS zoom */
+}
+
+/* ── Sidebar Navigation Links ── */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  color: #94a3b8;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+  margin-bottom: 4px;
+  border-left: 4px solid transparent;
+}
+
+.sidebar-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.sidebar-link.active {
+  background-color: rgba(249, 115, 22, 0.15);
+  color: #f97316;
+  font-weight: 600;
+  border-left: 4px solid #f97316;
+}
+
+/* ── Metric / Dashboard Cards ── */
+.metric-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.metric-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+/* ── Status Badges ── */
+.badge-warning {
+  display: inline-block;
+  background-color: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.badge-success {
+  display: inline-block;
+  background-color: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* ── Modal Overlay ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-container {
+  background: #ffffff;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 28px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+/* ── Toast Notifications ── */
+.toast-msg {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #1e293b;
+  color: #ffffff;
+  padding: 13px 20px;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  z-index: 1000;
+  animation: slideUp 0.3s ease forwards;
+  min-width: 260px;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ── View hidden / visible ── */
+.view-panel { display: block; }
+.view-panel.hidden { display: none; }
+
+/* ── POS product card hover ── */
+.pos-product-card {
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.pos-product-card:hover {
+  border-color: #f97316;
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.15);
+}
+.pos-product-card:hover .add-icon {
+  background: #f97316;
+  color: #fff;
+}
+
+/* ── Table row hover ── */
+tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* ── Print Stylesheet ── */
+@media print {
+  body * { visibility: hidden; }
+  #printInvoiceArea,
+  #printInvoiceArea * { visibility: visible; }
+  #printInvoiceArea {
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%;
+  }
+}
+
+/* ── Scrollbar styling ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ==========================================================================
+   DARK MODE THEME OVERRIDES
+   ========================================================================== */
+html.dark body {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+html.dark header {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html.dark #pageTitle {
+  color: #f8fafc !important;
+}
+
+html.dark #currentDateStr {
+  color: #cbd5e1 !important;
+}
+
+html.dark .bg-white,
+html.dark .metric-card,
+html.dark .modal-container,
+html.dark .pos-product-card {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+html.dark .bg-slate-50 {
+  background-color: #1a2332 !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+html.dark .bg-slate-100 {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+html.dark .bg-slate-200 {
+  background-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+html.dark table thead {
+  background-color: #0f172a !important;
+  color: #94a3b8 !important;
+}
+
+html.dark table tbody tr {
+  border-color: #334155 !important;
+}
+
+html.dark tbody tr:hover {
+  background-color: #273549 !important;
+}
+
+html.dark .text-slate-900,
+html.dark .text-slate-800 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-slate-700,
+html.dark .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .text-slate-500,
+html.dark .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+html.dark .border-slate-100,
+html.dark .border-slate-200 {
+  border-color: #334155 !important;
+}
+
+html.dark .divide-slate-100 > * + * {
+  border-color: #334155 !important;
+}
+
+html.dark #themeToggleBtn {
+  background-color: #334155 !important;
+  color: #fbbf24 !important;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVE DRAWER & READABILITY BOOSTS
+   ========================================================================== */
+@media (max-width: 767px) {
+  aside {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    height: 100vh !important;
+    z-index: 50 !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+  }
+  aside.sidebar-open {
+    transform: translateX(0) !important;
+  }
+  .modal-container {
+    padding: 18px !important;
+    width: 95% !important;
+    max-height: 92vh !important;
+  }
+  .toast-msg {
+    left: 16px !important;
+    right: 16px !important;
+    bottom: 16px !important;
+    min-width: auto !important;
+  }
+}
+
+/* Status Badges Readability Boost */
+.badge-warning,
+.badge-success {
+  font-size: 0.8rem !important;
+  padding: 4px 12px !important;
+}
+
+/* Table Text Sizing Boost */
+table {
+  font-size: 0.875rem !important; /* 14px */
+}
+table th {
+  font-size: 0.78rem !important; /* 12.5px */
+}
+
+

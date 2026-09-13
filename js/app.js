@@ -862,6 +862,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     },
     saveProductSubmit: async () => {
+      const submitBtn = document.querySelector("#productForm button[type='submit']");
+      const originalBtnText = submitBtn ? submitBtn.innerHTML : "Save Product Record";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving to Database...';
+        submitBtn.classList.add("opacity-70", "cursor-not-allowed");
+      }
+
       const editIndex = document.getElementById("pmEditIndex").value;
       const id = pmId.value;
       const brandInput = document.getElementById("pmBrand").value.trim();
@@ -892,13 +900,23 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       saveDB();
-      productModalOverlay.classList.remove("active");
       renderProductsMasterTable();
-      showToast(`Product ${id} saved & refreshing...`);
-      await window.GoogleSheetsAPI.autoSync("SYNC_PRODUCTS", DB.products);
-      setTimeout(() => {
-        window.location.reload();
-      }, 300);
+      showToast(`Saving Product ${id} in background...`);
+      
+      const response = await window.GoogleSheetsAPI.autoSync("SYNC_PRODUCTS", DB.products);
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.classList.remove("opacity-70", "cursor-not-allowed");
+      }
+
+      if (response && response.success === false) {
+        showToast(`Failed to save product: ${response.error || response.reason}`, true);
+      } else {
+        productModalOverlay.classList.remove("active");
+        showToast(`Product ${id} saved successfully!`);
+      }
     },
     addPosItem: (productId) => {
       const p = DB.products.find((item) => item.id === productId);

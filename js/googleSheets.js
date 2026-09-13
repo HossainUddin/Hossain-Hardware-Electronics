@@ -234,6 +234,8 @@ function doPost(e) {
         "Selling Price",
         "Stock",
         "Unit",
+        "Image",
+        "Description",
       ]);
       sheet.clearContents();
       var data = [
@@ -247,6 +249,8 @@ function doPost(e) {
           "Selling Price",
           "Stock",
           "Unit",
+          "Image",
+          "Description",
         ],
       ];
       if (Array.isArray(payload)) {
@@ -261,12 +265,14 @@ function doPost(e) {
             p.sellingPrice,
             p.stock,
             p.unit,
+            p.image || "",
+            p.description || "",
           ]);
         });
       }
-      sheet.getRange(1, 1, data.length, 9).setValues(data);
+      sheet.getRange(1, 1, data.length, 11).setValues(data);
       sheet
-        .getRange(1, 1, 1, 9)
+        .getRange(1, 1, 1, 11)
         .setFontWeight("bold")
         .setBackground("#1E3A8A")
         .setFontColor("#FFFFFF");
